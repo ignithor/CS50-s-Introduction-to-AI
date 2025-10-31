@@ -26,25 +26,24 @@ def player(board):
     counter_empty = 0
     for i in range(3):
         for j in range(3):
-            if board[i][j]==EMPTY:
-                counter_empty+=1
-    if counter_empty%2==1:
-        return(X)
+            if board[i][j] == EMPTY:
+                counter_empty += 1
+    if counter_empty % 2 == 1:
+        return (X)
     else:
-        return(O)
+        return (O)
                 
-
 
 def actions(board):
     """
     Returns set of all possible actions (i, j) available on the board.
     """
-    available = []
+    available = set()
     for i in range(3):
         for j in range(3):
-            if board[i][j]==EMPTY:
-                available.append((i,j))
-    return(available)
+            if board[i][j] == EMPTY:
+                available.add((i, j))
+    return (available)
 
 
 def result(board, action):
@@ -52,28 +51,28 @@ def result(board, action):
     Returns the board that results from making move (i, j) on the board.
     """
     available = actions(board)
-    if not(action in available):
+    if not (action in available):
         raise ValueError("Action not allowed")
     turn = player(board)
     new_board = copy.deepcopy(board)
-    new_board[action[0]][action[1]]=turn
-    return(new_board)
-    
+    new_board[action[0]][action[1]] = turn
+    return (new_board)
+
 
 def winner(board):
     """
     Returns the winner of the game, if there is one.
     """
     for i in range(3):
-        if board[i][0]==board[i][1]==board[i][2]!=EMPTY:
-            return(board[i][0])
-        if board[0][i]==board[1][i]==board[2][i]!=EMPTY:
-            return(board[0][i])
-    if board[0][0]==board[1][1]==board[2][2]!=EMPTY:
-        return(board[0][0])
-    if board[0][2]==board[1][1]==board[2][0]!=EMPTY:
-        return(board[0][2])
-    return(None)
+        if board[i][0] == board[i][1] == board[i][2] != EMPTY:
+            return (board[i][0])
+        if board[0][i] == board[1][i] == board[2][i] != EMPTY:
+            return (board[0][i])
+    if board[0][0] == board[1][1] == board[2][2] != EMPTY:
+        return (board[0][0])
+    if board[0][2] == board[1][1] == board[2][0] != EMPTY:
+        return (board[0][2])
+    return (None)
 
 
 def terminal(board):
@@ -81,10 +80,10 @@ def terminal(board):
     Returns True if game is over, False otherwise.
     """
     finish = winner(board)
-    if finish != None or actions(board)==[]:
-        return(True)
+    if finish != None or len(actions(board)) == 0:
+        return (True)
     else:
-        return(False)
+        return (False)
 
 
 def utility(board):
@@ -93,46 +92,51 @@ def utility(board):
     """
     end = winner(board)
     if end == None:
-        return(0)
-    elif end==X:
-        return(1)
+        return (0)
+    elif end == X:
+        return (1)
     else:
-        return(-1)
+        return (-1)
+
 
 def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
     if terminal(board):
-        return(None)
+        return (None)
     turn = player(board)
-    if turn==X:
+    if turn == X:
         # Maximise function
         _, action = maxvalue(board)
-        return(action)
+        return (action)
     else:
         # Minimise function
         _, action = minvalue(board)
-        return(action)
+        return (action)
+
 
 def maxvalue(board):
     v = float('-inf')
+    best_action = None
     if terminal(board):
-        return(utility(board), None)
+        return (utility(board), None)
     for action in actions(board):
-        v_min, _ = minvalue(result(board,action))
-        if v<v_min:
-            v=v_min
-            best_action = action        
-    return(v,best_action)
-    
+        v_min, _ = minvalue(result(board, action))
+        if v < v_min:
+            v = v_min
+            best_action = action
+    return (v, best_action)
+
+
 def minvalue(board):
-    v= float('inf')
+    v = float('inf')
+    best_action = None
     if terminal(board):
-        return(utility(board), None)
+        return (utility(board), None)
     for action in actions(board):
-        v_max, _ = maxvalue(result(board,action))
-        if v>v_max:
-            v=v_max
-            best_action= action
-    return(v,best_action)
+        v_max, _ = maxvalue(result(board, action))
+        if v > v_max:
+            v = v_max
+            best_action = action
+    return (v, best_action)
